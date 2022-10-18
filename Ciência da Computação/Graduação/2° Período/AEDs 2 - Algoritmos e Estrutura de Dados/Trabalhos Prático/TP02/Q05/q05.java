@@ -7,8 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-class Game {
 
+class Game {
   private int app_id = 0;
   private String name;
   private Date release_date;
@@ -45,6 +45,8 @@ class Game {
     setGenres(args[16]);
   }
 
+  // Métodos Costrutores
+  
   public Game(){
     this.app_id = 0;
     this.name = "";
@@ -53,6 +55,8 @@ class Game {
   public Game(int app_id){
     this.app_id = app_id;
   }
+
+  // Métodos Seters e Geters
 
   public int getApp_id() {
     return app_id;
@@ -78,6 +82,9 @@ class Game {
   }
   public void setRelease_date(String data) throws ParseException {
     SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy",Locale.US);
+    if(data.length() < 12){
+      sdf = new SimpleDateFormat("MMM yyyy",Locale.US);
+    } 
     if(data != null){
       this.release_date = sdf.parse(data);
     }
@@ -211,6 +218,8 @@ class Game {
     }
   }
 
+  // Método clone
+
   public Game clone(){
     Game clone = new Game();
     clone.app_id = this.app_id;
@@ -231,6 +240,8 @@ class Game {
     clone.genres = this.genres;
     return clone;
   }
+
+  // Método imprimir
 
   public void imprimir() throws NullPointerException{
     System.out.print(app_id + " ");
@@ -255,7 +266,12 @@ class Game {
     if(avg_pt > 0){
       if(avg_pt > 60){
         int hours = (int)avg_pt / 60;
-        System.out.print(hours + "h " + (avg_pt - (hours * 60)) + "m ");
+        int minuts = avg_pt - (hours * 60);
+        if(minuts == 0){
+          System.out.print(hours + "h ");
+        } else {
+          System.out.print(hours + "h " + minuts + "m ");
+        }
       }else {
         System.out.print(avg_pt + "m ");
       }
@@ -266,6 +282,8 @@ class Game {
     System.out.print(getGenres() + " ");
     System.out.print("\n");
   }
+
+  // Método ler
 
   public void ler() throws ParseException, IOException{
     String path = "./tmp/games.csv";
@@ -316,22 +334,184 @@ class Game {
   }
 }
 
-class q01 {
-  public static void main(String[] args) throws ParseException, IOException, NullPointerException {
-    String[] entrada = new String[1000];
-    int numEntrada = 0;
+class Lista {
+  private int tamanho;
+  private int inicio;
+  private int fim;
+  private Game[] lista;
+
+  // Método Construtor
+
+  public Lista(Game[] jogos, int tamanho){
+    this.tamanho = tamanho;
+    this.inicio =  0;
+    this.fim = jogos.length;
+    lista = new Game[tamanho];
+    for(int i = 0; i < jogos.length; i++){
+      this.lista[i] = jogos[i].clone();
+    }
+  }
+
+  // Métodos Seters e Geters
+
+  public int getTamanho() {
+    return tamanho;
+  }
+  public void setTamanho(int tamanho) {
+    this.tamanho = tamanho;
+  }
+
+  public int getInicio() {
+    return inicio;
+  }
+  public void setInicio(int inicio) {
+    this.inicio = inicio;
+  }
+
+  public int getFim() {
+    return fim;
+  }
+  public void setFim(int fim) {
+    this.fim = fim;
+  }
+
+  // Metodo II
+
+  public void inserirInicio(int codigo) throws ParseException, IOException {
+    if(fim + 1 <= tamanho){
+      for(int i = tamanho - 1; i > 0; i--){
+        lista[i] = lista [i - 1];
+      }
+      lista[0] = new Game(codigo);
+      lista[0].ler();
+      fim ++;
+    }
+	}
+
+  // Metodo IF
+
+  public void inserirFim(int codigo) throws ParseException, IOException {
+    if(fim + 1 <= tamanho){
+      lista[fim] = new Game(codigo);
+      lista[fim].ler();
+      fim ++;
+    }
+	}
+
+   // Metodo RI
+
+   public String removerInicio() throws ParseException, IOException {
+    String jogo = lista[0].getName();
+    fim --;
+    for(int i = 0; i < fim; i++){
+      lista[i] = lista [i + 1];
+    }
+    return jogo;
+	}
+
+  // Metodo RF
+
+  public String removerFim() throws ParseException, IOException {
+    String jogo = lista[fim - 1].getName();
+    fim --;
+    return jogo;
+	}
+
+  // Metodo I
+
+  public void inserir(int codigo, int pos) throws ParseException, IOException {
+    for(int i = fim; i > pos; i--) {
+      lista[i] = lista[i - 1];
+    }
+    lista[pos] = new Game(codigo);
+    lista[pos].ler();
+    fim ++;
+	}
+
+  // Metodo R
+
+  public String remover(int pos) throws ParseException, IOException {
+    String jogo = lista[pos].getName();
+    fim --;
+    for(int i = pos; i < fim; i++) {
+      lista[i] = lista[i + 1];
+    }
+    return jogo;
+	}
+
+  // Metodo mostrar
+
+  public void mostrar(){
+    for(int i = 0; i < fim; i++){
+      System.out.print("[" + i + "] ");
+      lista[i].imprimir();
+    }
+  }
+}
+
+class q05 {
+  public static void main(String[] args) throws Exception {
+    Locale.setDefault(new Locale("en", "US"));
+
+    String[] entradaGames = new String[1000];
+    int numEntradaGames = 0;
 
     do{
-      entrada[numEntrada] = MyIO.readLine();
-    } while(entrada[numEntrada++].equals("FIM") == false);
-    numEntrada--;
-
-    Game[] games = new Game[numEntrada];
+      entradaGames[numEntradaGames] = MyIO.readLine();
+    } while(entradaGames[numEntradaGames++].equals("FIM") == false);
+    numEntradaGames--;
+    
+    Game[] games = new Game[numEntradaGames];
 
     for(int i = 0; i < games.length; i++){
-      games[i] = new Game(Integer.parseInt(entrada[i]));
+      games[i] = new Game(Integer.parseInt(entradaGames[i]));
       games[i].ler();
-      games[i].imprimir();
     }
+
+    int numOperacoes = Integer.parseInt(MyIO.readLine());
+    Lista lista = new Lista(games, games.length + numOperacoes);
+    int numRemocoes = 0;
+    String[] operacoes = new String[numOperacoes];
+
+    for(int i = 0; i < numOperacoes; i++){
+      operacoes[i] = MyIO.readLine();
+      if(operacoes[i].charAt(0) == 'R'){
+        numRemocoes ++;
+      }
+    }
+    
+    String[] jogosRemovidos = new String[numRemocoes];
+    int removidos = 0;
+
+    for(int i = 0; i < numOperacoes; i++){
+      String[] operacao = operacoes[i].split(" ");
+      if(operacao[0].charAt(0) == 'I'){
+        if(operacao[0].charAt(1) == 'I'){
+          lista.inserirInicio(Integer.parseInt(operacao[1]));
+        } else if(operacao[0].charAt(1) == 'F'){
+          lista.inserirFim(Integer.parseInt(operacao[1]));
+        } else {
+          lista.inserir(Integer.parseInt(operacao[2]), Integer.parseInt(operacao[1]));
+        }
+      } else if(operacao[0].charAt(0) == 'R'){
+        if(operacao[0].charAt(1) == 'I'){
+          jogosRemovidos[removidos] = lista.removerInicio();
+          removidos ++;
+        } else if(operacao[0].charAt(1) == 'F'){
+          jogosRemovidos[removidos] = lista.removerFim();
+          removidos ++;
+        } else {
+          jogosRemovidos[removidos] = lista.remover(Integer.parseInt(operacao[1]));
+          removidos ++;
+        }
+      } else {
+        throw new Exception("Operação inválida");
+      }
+    }
+
+    for(int i = 0; i < removidos; i ++){
+      System.out.println("(R) " + jogosRemovidos[i]);
+    }
+    lista.mostrar();
   }
 }

@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.Locale;
 
 class Game {
-
   private int app_id = 0;
   private String name;
   private Date release_date;
@@ -45,6 +44,8 @@ class Game {
     setGenres(args[16]);
   }
 
+  // Métodos Costrutores
+  
   public Game(){
     this.app_id = 0;
     this.name = "";
@@ -53,6 +54,8 @@ class Game {
   public Game(int app_id){
     this.app_id = app_id;
   }
+
+  // Métodos Seters e Geters
 
   public int getApp_id() {
     return app_id;
@@ -76,10 +79,18 @@ class Game {
       return "null";
     }
   }
+  public Date getData(){
+    return this.release_date;
+  }
   public void setRelease_date(String data) throws ParseException {
-    SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy",Locale.US);
     if(data != null){
-      this.release_date = sdf.parse(data);
+      if(data.length() < 10){
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM yyyy",Locale.US);
+        this.release_date = sdf.parse(data);
+      } else {
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy",Locale.US);
+        this.release_date = sdf.parse(data);
+      }
     }
   }
 
@@ -211,6 +222,8 @@ class Game {
     }
   }
 
+  // Método clone
+
   public Game clone(){
     Game clone = new Game();
     clone.app_id = this.app_id;
@@ -231,6 +244,8 @@ class Game {
     clone.genres = this.genres;
     return clone;
   }
+
+  // Método imprimir
 
   public void imprimir() throws NullPointerException{
     System.out.print(app_id + " ");
@@ -255,7 +270,12 @@ class Game {
     if(avg_pt > 0){
       if(avg_pt > 60){
         int hours = (int)avg_pt / 60;
-        System.out.print(hours + "h " + (avg_pt - (hours * 60)) + "m ");
+        int minuts = avg_pt - (hours * 60);
+        if(minuts == 0){
+          System.out.print(hours + "h ");
+        } else {
+          System.out.print(hours + "h " + minuts + "m ");
+        }
       }else {
         System.out.print(avg_pt + "m ");
       }
@@ -267,8 +287,10 @@ class Game {
     System.out.print("\n");
   }
 
+  // Método ler
+
   public void ler() throws ParseException, IOException{
-    String path = "./tmp/games.csv";
+    String path = "/tmp/games.csv";
     try(BufferedReader br = new BufferedReader(new FileReader(path))){
       String line = br.readLine();
       while( line != null){
@@ -316,22 +338,213 @@ class Game {
   }
 }
 
-class q01 {
-  public static void main(String[] args) throws ParseException, IOException, NullPointerException {
-    String[] entrada = new String[1000];
-    int numEntrada = 0;
+class Lista {
+  private int tamanho;
+  private int inicio;
+  private int fim;
+  private Game[] lista;
+
+  // Método Construtor
+
+  public Lista(Game[] jogos, int tamanho){
+    this.tamanho = tamanho;
+    this.inicio =  0;
+    this.fim = jogos.length;
+    lista = new Game[tamanho];
+    for(int i = 0; i < jogos.length; i++){
+      this.lista[i] = jogos[i].clone();
+    }
+  }
+
+  // Métodos Seters e Geters
+
+  public int getTamanho() {
+    return tamanho;
+  }
+  public void setTamanho(int tamanho) {
+    this.tamanho = tamanho;
+  }
+
+  public int getInicio() {
+    return inicio;
+  }
+  public void setInicio(int inicio) {
+    this.inicio = inicio;
+  }
+
+  public int getFim() {
+    return fim;
+  }
+  public void setFim(int fim) {
+    this.fim = fim;
+  }
+
+  // Metodo II
+
+  public void inserirInicio(int codigo) throws ParseException, IOException {
+    if(fim + 1 <= tamanho){
+      for(int i = tamanho - 1; i > 0; i--){
+        lista[i] = lista [i - 1];
+      }
+      lista[0] = new Game(codigo);
+      lista[0].ler();
+      fim ++;
+    }
+	}
+
+  // Metodo IF
+
+  public void inserirFim(int codigo) throws ParseException, IOException {
+    if(fim + 1 <= tamanho){
+      lista[fim] = new Game(codigo);
+      lista[fim].ler();
+      fim ++;
+    }
+	}
+
+   // Metodo RI
+
+   public String removerInicio() throws ParseException, IOException {
+    String jogo = lista[0].getName();
+    fim --;
+    for(int i = 0; i < fim; i++){
+      lista[i] = lista [i + 1];
+    }
+    return jogo;
+	}
+
+  // Metodo RF
+
+  public String removerFim() throws ParseException, IOException {
+    String jogo = lista[fim - 1].getName();
+    fim --;
+    return jogo;
+	}
+
+  // Metodo I
+
+  public void inserir(int codigo, int pos) throws ParseException, IOException {
+    for(int i = fim; i > pos; i--) {
+      lista[i] = lista[i - 1];
+    }
+    lista[pos] = new Game(codigo);
+    lista[pos].ler();
+    fim ++;
+	}
+
+  // Metodo R
+
+  public String remover(int pos) throws ParseException, IOException {
+    String jogo = lista[pos].getName();
+    fim --;
+    for(int i = pos; i < fim; i++) {
+      lista[i] = lista[i + 1];
+    }
+    return jogo;
+	}
+
+  // Metodo mostrar
+
+  public void mostrar(){
+    for(int i = 0; i < fim; i++){
+      lista[i].imprimir();
+    }
+  }
+
+  //Método sort
+
+  public void sort(){
+    //Alterar o vetor ignorando a posicao zero
+    Game[] tmp = new Game[fim + 1];
+    for(int i = 0; i < fim; i++){
+       tmp[i+1] = lista[i];
+    }
+
+    lista = tmp;
+
+    //Contrucao do heap
+    for(int tamHeap = 2; tamHeap <= fim; tamHeap++){
+       construir(tamHeap);
+    }
+
+    //Ordenacao propriamente dita 
+    int tamHeap = fim;
+    while(tamHeap > 1){
+       swap(1, tamHeap--);
+       reconstruir(tamHeap);
+    }
+
+    //Alterar o vetor para voltar a posicao zero
+    tmp = lista;
+    lista = new Game[fim];
+    for(int i = 0; i < fim; i++){
+       lista[i] = tmp[i+1];
+    }
+  }
+
+  //Método swap
+  public void swap(int menor, int i){
+    Game temp = lista[menor];
+    lista[menor] = lista[i];
+    lista[i] = temp;
+  }
+
+
+  //Método para pegar a raiz do heap
+  public int getMaiorFilho(int i, int tamHeap){
+    int filho;
+    if (2*i == tamHeap || lista[2*i].getData().after(lista[2*i+1].getData())){
+       filho = 2*i;
+    } else {
+       filho = 2*i + 1;
+    }
+    return filho;
+ }
+
+  //Método de construção do heap
+  public void construir(int tamHeap){
+    for(int i = tamHeap; i > 1 && lista[i].getData().after(lista[i/2].getData()); i /= 2){
+       swap(i, i/2);
+    }
+  }
+
+ //Método de reconstrução ordenada do heap
+  public void reconstruir(int tamHeap){
+    int i = 1;
+    while(i <= (tamHeap/2)){
+      int filho = getMaiorFilho(i, tamHeap);
+      if(lista[i].getData().before(lista[filho].getData())){
+          swap(i, filho);
+          i = filho;
+      }else{
+          i = tamHeap;
+      }
+    }
+  }
+}
+
+class q05 {
+  public static void main(String[] args) throws Exception {
+    Locale.setDefault(new Locale("en", "US"));
+
+    String[] entradaGames = new String[1000];
+    int numEntradaGames = 0;
 
     do{
-      entrada[numEntrada] = MyIO.readLine();
-    } while(entrada[numEntrada++].equals("FIM") == false);
-    numEntrada--;
-
-    Game[] games = new Game[numEntrada];
+      entradaGames[numEntradaGames] = MyIO.readLine();
+    } while(entradaGames[numEntradaGames++].equals("FIM") == false);
+    numEntradaGames--;
+    
+    Game[] games = new Game[numEntradaGames];
 
     for(int i = 0; i < games.length; i++){
-      games[i] = new Game(Integer.parseInt(entrada[i]));
+      games[i] = new Game(Integer.parseInt(entradaGames[i]));
       games[i].ler();
-      games[i].imprimir();
     }
+
+    Lista lista = new Lista(games, games.length);
+
+    lista.sort();
+    lista.mostrar();
   }
 }

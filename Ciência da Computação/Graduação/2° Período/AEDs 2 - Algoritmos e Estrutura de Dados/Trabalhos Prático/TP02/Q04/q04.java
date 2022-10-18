@@ -7,8 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-class Game {
 
+class Game {
   private int app_id = 0;
   private String name;
   private Date release_date;
@@ -78,6 +78,9 @@ class Game {
   }
   public void setRelease_date(String data) throws ParseException {
     SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy",Locale.US);
+    if(data.length() < 12){
+      sdf = new SimpleDateFormat("MMM yyyy",Locale.US);
+    } 
     if(data != null){
       this.release_date = sdf.parse(data);
     }
@@ -316,22 +319,78 @@ class Game {
   }
 }
 
-class q01 {
+class q04 {
   public static void main(String[] args) throws ParseException, IOException, NullPointerException {
-    String[] entrada = new String[1000];
-    int numEntrada = 0;
+    Locale.setDefault(new Locale("en", "US"));
+
+    String[] entradaGames = new String[1000];
+    int numEntradaGames = 0;
 
     do{
-      entrada[numEntrada] = MyIO.readLine();
-    } while(entrada[numEntrada++].equals("FIM") == false);
-    numEntrada--;
+      entradaGames[numEntradaGames] = MyIO.readLine();
+    } while(entradaGames[numEntradaGames++].equals("FIM") == false);
+    numEntradaGames--;
 
-    Game[] games = new Game[numEntrada];
+    
+    String[] entradaPesquisa = new String[1000];
+    int numEntradaPesquisa = 0;
+    
+    do{
+      entradaPesquisa[numEntradaPesquisa] = MyIO.readLine();
+    } while(entradaPesquisa[numEntradaPesquisa++].equals("FIM") == false);
+    numEntradaPesquisa--;
+    
+    Game[] games = new Game[numEntradaGames];
+    String[] nameGames = new String[numEntradaGames];
 
     for(int i = 0; i < games.length; i++){
-      games[i] = new Game(Integer.parseInt(entrada[i]));
+      games[i] = new Game(Integer.parseInt(entradaGames[i]));
       games[i].ler();
-      games[i].imprimir();
+      nameGames[i] = games[i].getName();
+    }
+
+    // Ordenação
+
+    for(int i = 0; i < (nameGames.length - 1); i++){
+      int menor = i;
+      boolean trocou = false;
+      for(int j = (i + 1); j < nameGames.length; j++){
+        if(nameGames[menor] != null && nameGames[j] != null){
+          if(nameGames[menor].charAt(0) > nameGames[j].charAt(0)){
+            menor = j;
+            trocou = true;
+          }
+        }
+      }
+      if(trocou){
+        String temp = nameGames[menor];
+        nameGames[menor] = nameGames[i];
+        nameGames[i] = temp;
+      }
+    }
+
+    // Pesquisa
+    for(int i = 0; i < numEntradaPesquisa; i++){
+      boolean resp = false;
+      int dir = nameGames.length - 1, esq = 0, meio;
+      while (esq <= dir) {
+        meio = (esq + dir) / 2;
+        if (entradaPesquisa[i].equals(nameGames[meio])){
+          resp = true;
+          esq = nameGames.length;
+        } else if (entradaPesquisa[i].charAt(0) > nameGames[meio].charAt(0)){
+          esq = meio + 1;
+        } else {
+          dir = meio - 1;
+        } 
+      }
+
+      if(resp){
+        System.out.println("SIM");
+      } else {
+        System.out.println("NAO");
+      }
+      
     }
   }
 }
