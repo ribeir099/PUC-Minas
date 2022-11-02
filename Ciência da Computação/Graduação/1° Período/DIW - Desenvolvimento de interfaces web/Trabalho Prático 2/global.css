@@ -33,6 +33,12 @@ body {
     align-items: center;
 }
 
+.card a.card-film {
+    position: relative;
+    bottom: 0;
+    width: 90%;
+}
+
 footer {
     background-color: rgb(117, 117, 117);
     height: 100px;

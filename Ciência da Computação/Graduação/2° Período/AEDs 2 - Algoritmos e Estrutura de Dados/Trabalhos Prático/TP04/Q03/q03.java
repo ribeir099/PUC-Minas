@@ -7,6 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+// Criação da classe Jogo
+
 class Game {
   private int app_id = 0;
   private String name;
@@ -78,9 +80,6 @@ class Game {
     } else {
       return "null";
     }
-  }
-  public Date getData(){
-    return this.release_date;
   }
   public void setRelease_date(String data) throws ParseException {
     if(data != null){
@@ -338,143 +337,126 @@ class Game {
   }
 }
 
-class Lista {
-  private int tamanho;
-  private int inicio;
-  private int fim;
-  private Game[] lista;
+// Criação da Célula
 
-  // Método Construtor
+class Celula {
+	public Game elemento; // Elemento inserido na celula.
+	public Celula prox; // Aponta a celula prox.
 
-  public Lista(Game[] jogos, int tamanho){
-    this.tamanho = tamanho;
-    this.inicio =  0;
-    this.fim = jogos.length;
-    lista = new Game[tamanho];
-    for(int i = 0; i < jogos.length; i++){
-      this.lista[i] = jogos[i].clone();
+
+	/**
+	 * Construtor da classe.
+	 */
+	public Celula() {
+		this.elemento = new Game();
+	}
+
+	/**
+	 * Construtor da classe.
+	 * @param elemento int inserido na celula.
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	public Celula(int id) throws ParseException, IOException {
+      this.elemento = new Game(id);
+      this.elemento.ler();
+      this.prox = null;
+	}
+}
+
+// Criação da fila com alocação dinámica
+
+class Fila {
+	private Celula primeiro;
+  private Celula ultimo;
+
+	public Celula getPrimeiro() {
+    return primeiro;
+  }
+
+	public Celula getUltimo() {
+    return ultimo;
+  }
+
+  /**
+	 * Construtor da classe que cria uma fila sem elementos (somente no cabeca).
+	 */
+	public Fila() {
+		primeiro = new Celula();
+		ultimo = primeiro;
+	}
+
+
+	/**
+	 * Insere elemento na fila (politica FIFO).
+	 * 
+   */
+	public void inserir(int id) throws ParseException, IOException {
+		ultimo.prox = new Celula(id);
+		ultimo = ultimo.prox;
+	}
+
+
+	/**
+	 * Remove elemento da fila (politica FIFO).
+	 * @return Elemento removido.
+	 * @trhows Exception Se a fila nao tiver elementos.
+	 */
+	public String remover() throws Exception {
+		if (primeiro == ultimo) {
+			throw new Exception("Erro ao remover!");
+		}
+
+    Celula tmp = primeiro;
+		primeiro = primeiro.prox;
+		String resp = primeiro.elemento.getName();
+    tmp.prox = null;
+    tmp = null;
+		return resp;
+	}
+
+
+	/**
+	 * Mostra os elementos separados por espacos.
+	 */
+	public void mostrar() {
+    int length = 0;
+    for (Celula i = primeiro.prox; i != null; i = i.prox, length ++) {
+      System.out.print("[" + length + "] ");
+      i.elemento.imprimir();
     }
   }
 
-  // Métodos Seters e Geters
+  // Método que retorna o tamanho da fila
 
-  public int getTamanho() {
+  public int tamanho() {
+    int tamanho = 0; 
+    for(Celula i = primeiro; i != ultimo; i = i.prox, tamanho++);
     return tamanho;
   }
-  public void setTamanho(int tamanho) {
-    this.tamanho = tamanho;
-  }
 
-  public int getInicio() {
-    return inicio;
-  }
-  public void setInicio(int inicio) {
-    this.inicio = inicio;
-  }
+  // Método para saber se a fila está cheia
 
-  public int getFim() {
-    return fim;
-  }
-  public void setFim(int fim) {
-    this.fim = fim;
-  }
+  public boolean isFull(){
+    boolean full = false;
 
-  // Metodo II
-
-  public void inserirInicio(int codigo) throws ParseException, IOException {
-    if(fim + 1 <= tamanho){
-      for(int i = tamanho - 1; i > 0; i--){
-        lista[i] = lista [i - 1];
-      }
-      lista[0] = new Game(codigo);
-      lista[0].ler();
-      fim ++;
+    if(this.tamanho() > 5){
+      full = true;
     }
-	}
 
-  // Metodo IF
-
-  public void inserirFim(int codigo) throws ParseException, IOException {
-    if(fim + 1 <= tamanho){
-      lista[fim] = new Game(codigo);
-      lista[fim].ler();
-      fim ++;
-    }
-	}
-
-   // Metodo RI
-
-   public String removerInicio() throws ParseException, IOException {
-    String jogo = lista[0].getName();
-    fim --;
-    for(int i = 0; i < fim; i++){
-      lista[i] = lista [i + 1];
-    }
-    return jogo;
-	}
-
-  // Metodo RF
-
-  public String removerFim() throws ParseException, IOException {
-    String jogo = lista[fim - 1].getName();
-    fim --;
-    return jogo;
-	}
-
-  // Metodo I
-
-  public void inserir(int codigo, int pos) throws ParseException, IOException {
-    for(int i = fim; i > pos; i--) {
-      lista[i] = lista[i - 1];
-    }
-    lista[pos] = new Game(codigo);
-    lista[pos].ler();
-    fim ++;
-	}
-
-  // Metodo R
-
-  public String remover(int pos) throws ParseException, IOException {
-    String jogo = lista[pos].getName();
-    fim --;
-    for(int i = pos; i < fim; i++) {
-      lista[i] = lista[i + 1];
-    }
-    return jogo;
-	}
-
-  // Metodo mostrar
-
-  public void mostrar(){
-    for(int i = 0; i < fim; i++){
-      lista[i].imprimir();
-    }
+    return full;
   }
 
-  //Método sort
-  public void sort(){
-    for (int i = (fim - 1); i > 0; i--) {
-			for (int j = 0; j < i; j++) {
-        int troca = lista[j].getDevelopers().compareTo(lista[j + 1].getDevelopers());
-        if(troca == 0) {
-          troca = lista[j].getName().compareTo(lista[j + 1].getName());
-        }
-				if (troca > 0) {
-          swap(j, j+1);
-				}
-			}
-		}
-  }
+  public int getMedia(){
+    int soma = 0;
+    for(Celula i = primeiro; i != ultimo; i = i.prox, soma += i.elemento.getAvg_pt());
+    int media = Math.round(soma / this.tamanho());
 
-  //Método swap
-  public void swap(int menor, int i){
-    Game temp = lista[menor];
-    lista[menor] = lista[i];
-    lista[i] = temp;
+    return media;
   }
 }
 
-class q08 {
+class q03 {
   public static void main(String[] args) throws Exception {
     Locale.setDefault(new Locale("en", "US"));
 
@@ -493,9 +475,53 @@ class q08 {
       games[i].ler();
     }
 
-    Lista lista = new Lista(games, games.length);
+    int numOperacoes = Integer.parseInt(MyIO.readLine());
+    
+    Fila fila = new Fila();
 
-    lista.sort();
-    lista.mostrar();
+    for(int i = 0; i < games.length; i++){
+      if(!fila.isFull()) {
+        fila.inserir(games[i].getApp_id());
+        System.out.println(fila.getMedia());
+      } else {
+        fila.remover();
+        fila.inserir(games[i].getApp_id());
+        System.out.println(fila.getMedia());
+      }
+    }
+
+    int numRemocoes = 0;
+    String[] operacoes = new String[numOperacoes];
+
+    for(int i = 0; i < numOperacoes; i++){
+      operacoes[i] = MyIO.readLine();
+      if(operacoes[i].charAt(0) == 'R'){
+        numRemocoes ++;
+      }
+    }
+    
+    String[] jogosRemovidos = new String[numRemocoes];
+    int removidos = 0;
+
+    for(int i = 0; i < numOperacoes; i++){
+      String[] operacao = operacoes[i].split(" ");
+      if(operacao[0].charAt(0) == 'I'){
+        if(fila.isFull()){
+          fila.remover();
+        }
+        fila.inserir(Integer.parseInt(operacao[1]));
+        System.out.println(fila.getMedia());
+      } else if(operacao[0].charAt(0) == 'R'){
+        jogosRemovidos[removidos] = fila.remover();
+        removidos ++;
+      } else {
+        throw new Exception("Operação Inválida");
+      }
+    }
+
+    for(int i = 0; i < removidos; i ++){
+      System.out.println("(R) " + jogosRemovidos[i]);
+    }
+    fila.mostrar();
   }
 }

@@ -338,143 +338,247 @@ class Game {
   }
 }
 
+// Criação da da célula dupla
+
+class Celula {
+	public Game elemento; 
+	public Celula ant; 
+	public Celula prox; 
+
+	/**
+	 * Construtor da classe.
+	 */
+	public Celula() {
+		this.elemento = new Game();
+	}
+
+	/**
+	 * Construtor da classe.
+	 */
+	public Celula(int id) throws ParseException, IOException {
+      this.elemento = new Game(id);
+      this.elemento.ler();
+      this.ant = this.prox = null;
+	}
+}
+
+// Criação da lista dupla com alocação dinámica
+
 class Lista {
-  private int tamanho;
-  private int inicio;
-  private int fim;
-  private Game[] lista;
+	private Celula primeiro;
+	private Celula ultimo;
 
-  // Método Construtor
 
-  public Lista(Game[] jogos, int tamanho){
-    this.tamanho = tamanho;
-    this.inicio =  0;
-    this.fim = jogos.length;
-    lista = new Game[tamanho];
-    for(int i = 0; i < jogos.length; i++){
-      this.lista[i] = jogos[i].clone();
+	/**
+	 * Construtor da classe que cria uma lista sem elementos (somente no cabeca).
+	 */
+	public Lista() {
+		primeiro = new Celula();
+		ultimo = primeiro;
+	}
+
+
+	/**
+	 * Insere um elemento na primeira posicao da lista.
+	 */
+	public void inserirInicio(int id) throws ParseException, IOException {
+		Celula tmp = new Celula(id);
+
+    tmp.ant = primeiro;
+    tmp.prox = primeiro.prox;
+    primeiro.prox = tmp;
+    if (primeiro == ultimo) {
+        ultimo = tmp;
+    } else {
+        tmp.prox.ant = tmp;
     }
-  }
+    tmp = null;
+	}
 
-  // Métodos Seters e Geters
 
-  public int getTamanho() {
-    return tamanho;
-  }
-  public void setTamanho(int tamanho) {
-    this.tamanho = tamanho;
-  }
+	/**
+	 * Insere um elemento na ultima posicao da lista.
+	 */
+	public void inserirFim(int id) throws ParseException, IOException {
+		ultimo.prox = new Celula(id);
+		ultimo.prox.ant = ultimo;
+		ultimo = ultimo.prox;
+	}
 
-  public int getInicio() {
-    return inicio;
-  }
-  public void setInicio(int inicio) {
-    this.inicio = inicio;
-  }
 
-  public int getFim() {
-    return fim;
-  }
-  public void setFim(int fim) {
-    this.fim = fim;
-  }
+	/**
+	 * Remove um elemento da primeira posicao da lista.
+	 */
+	public String removerInicio() throws Exception {
+		if (primeiro == ultimo) {
+			throw new Exception("Erro ao remover (vazia)!");
+		}
 
-  // Metodo II
+    Celula tmp = primeiro;
+		primeiro = primeiro.prox;
 
-  public void inserirInicio(int codigo) throws ParseException, IOException {
-    if(fim + 1 <= tamanho){
-      for(int i = tamanho - 1; i > 0; i--){
-        lista[i] = lista [i - 1];
+		String resp = primeiro.elemento.getName();
+    tmp.prox = primeiro.ant = null;
+    tmp = null;
+		return resp;
+	}
+
+
+	/**
+	 * Remove um elemento da ultima posicao da lista.
+    * @return resp int elemento a ser removido.
+	 * @throws Exception Se a lista nao contiver elementos.
+	 */
+	public String removerFim() throws Exception {
+		if (primeiro == ultimo) {
+			throw new Exception("Erro ao remover (vazia)!");
+		} 
+
+    String resp = ultimo.elemento.getName();
+    ultimo = ultimo.ant;
+    ultimo.prox.ant = null;
+    ultimo.prox = null;
+
+		return resp;
+	}
+
+
+	/**
+    * Insere um elemento em uma posicao especifica considerando que o 
+    * primeiro elemento valido esta na posicao 0.
+	 */
+   public void inserir(int id, int pos) throws Exception {
+
+      int tamanho = tamanho();
+
+      if(pos < 0 || pos > tamanho){
+			  throw new Exception("Erro ao inserir posicao (" + pos + " / tamanho = " + tamanho +  " jogo " + id + ") invalida!");
+      } else if (pos == 0){
+         inserirInicio(id);
+      } else if (pos == tamanho){
+         inserirFim(id);
+      } else {
+		   // Caminhar ate a posicao anterior a insercao
+         Celula i = primeiro;
+         for(int j = 0; j < pos; j++, i = i.prox);
+		
+         Celula tmp = new Celula(id);
+         tmp.ant = i;
+         tmp.prox = i.prox;
+         tmp.ant.prox = tmp.prox.ant = tmp;
+         tmp = i = null;
       }
-      lista[0] = new Game(codigo);
-      lista[0].ler();
-      fim ++;
+   }
+
+
+	/**
+    * Remove um elemento de uma posicao especifica da lista
+    * considerando que o primeiro elemento valido esta na posicao 0.
+	 */
+	public String remover(int pos) throws Exception {
+      String resp;
+      int tamanho = tamanho();
+
+		if (primeiro == ultimo){
+			throw new Exception("Erro ao remover (vazia)!");
+
+    } else if(pos < 0 || pos >= tamanho){
+			  throw new Exception("Erro ao remover (posicao " + pos + " / " + tamanho + " invalida!");
+      } else if (pos == 0){
+          resp = removerInicio();
+      } else if (pos == tamanho - 1){
+          resp = removerFim();
+      } else {
+		    // Caminhar ate a posicao anterior a insercao
+          Celula i = primeiro.prox;
+
+          for(int j = 0; j < pos; j++, i = i.prox);
+    
+          i.ant.prox = i.prox;
+          i.prox.ant = i.ant;
+          resp = i.elemento.getName();
+          i.prox = i.ant = null;
+          i = null;
+      }
+
+		return resp;
+	}
+
+	/**
+	 * Mostra os elementos da lista separados por espacos.
+	 */
+	public void mostrar() {
+    for(Celula i = primeiro.prox; i != null; i = i.prox) {
+      i.elemento.imprimir();
     }
 	}
 
-  // Metodo IF
+	/**
+	 * Calcula e retorna o tamanho, em numero de elementos, da lista.
+	*/
 
-  public void inserirFim(int codigo) throws ParseException, IOException {
-    if(fim + 1 <= tamanho){
-      lista[fim] = new Game(codigo);
-      lista[fim].ler();
-      fim ++;
-    }
-	}
-
-   // Metodo RI
-
-   public String removerInicio() throws ParseException, IOException {
-    String jogo = lista[0].getName();
-    fim --;
-    for(int i = 0; i < fim; i++){
-      lista[i] = lista [i + 1];
-    }
-    return jogo;
-	}
-
-  // Metodo RF
-
-  public String removerFim() throws ParseException, IOException {
-    String jogo = lista[fim - 1].getName();
-    fim --;
-    return jogo;
-	}
-
-  // Metodo I
-
-  public void inserir(int codigo, int pos) throws ParseException, IOException {
-    for(int i = fim; i > pos; i--) {
-      lista[i] = lista[i - 1];
-    }
-    lista[pos] = new Game(codigo);
-    lista[pos].ler();
-    fim ++;
-	}
-
-  // Metodo R
-
-  public String remover(int pos) throws ParseException, IOException {
-    String jogo = lista[pos].getName();
-    fim --;
-    for(int i = pos; i < fim; i++) {
-      lista[i] = lista[i + 1];
-    }
-    return jogo;
-	}
-
-  // Metodo mostrar
-
-  public void mostrar(){
-    for(int i = 0; i < fim; i++){
-      lista[i].imprimir();
-    }
+  public int tamanho() {
+    int tamanho = 0; 
+    for(Celula i = primeiro; i != ultimo; i = i.prox, tamanho++);
+    return tamanho;
   }
 
   //Método sort
+
   public void sort(){
-    for (int i = (fim - 1); i > 0; i--) {
-			for (int j = 0; j < i; j++) {
-        int troca = lista[j].getDevelopers().compareTo(lista[j + 1].getDevelopers());
-        if(troca == 0) {
-          troca = lista[j].getName().compareTo(lista[j + 1].getName());
-        }
-				if (troca > 0) {
-          swap(j, j+1);
-				}
-			}
-		}
+    int fim = this.tamanho();
+    quicksort(0, fim - 1);
   }
 
   //Método swap
-  public void swap(int menor, int i){
-    Game temp = lista[menor];
-    lista[menor] = lista[i];
-    lista[i] = temp;
+  public void swap(Celula maior, Celula menor){
+    if(menor.prox != null) {
+      Celula tmp = new Celula();
+      tmp.ant = maior.ant;
+      tmp.prox = maior.prox;
+  
+      maior.ant.prox = menor;
+      maior.prox.ant = menor;
+      maior.ant = menor.ant;
+      maior.prox = menor.prox;
+  
+      menor.ant.prox = maior;
+      menor.prox.ant = maior;
+      menor.ant = tmp.ant;
+      menor.prox = tmp.prox;
+  
+      tmp = null;
+    }
+  }
+
+  //Método quicksort
+  private void quicksort(int esq, int dir) {
+    int i = esq, j = dir, pos = Math.round(this.tamanho() / 2);
+    Celula pivo = primeiro.prox, inicio = primeiro.prox.prox, fim = ultimo;
+    for(int g = 0; g < pos; g++, pivo = pivo.prox);
+
+    while (i <= j) {
+      while (inicio.elemento.getData().before(pivo.elemento.getData())){
+        inicio = inicio.prox;
+        System.out.println(i);
+        i++;
+      } 
+      while (fim.elemento.getData().after(pivo.elemento.getData())){
+        fim = fim.ant;
+        j--;
+      } 
+      if (i <= j) {
+        swap(inicio, fim);
+        i++;
+        j--;
+      }
+    }
+    if (esq < j)  quicksort(esq, j);
+    if (i < dir)  quicksort(i, dir);
   }
 }
 
-class q08 {
+class q04 {
   public static void main(String[] args) throws Exception {
     Locale.setDefault(new Locale("en", "US"));
 
@@ -493,9 +597,12 @@ class q08 {
       games[i].ler();
     }
 
-    Lista lista = new Lista(games, games.length);
-
+    Lista lista = new Lista();
+    for(int i = 0; i < games.length; i++){
+      lista.inserirFim(games[i].getApp_id());
+    }
+    
     lista.sort();
-    lista.mostrar();
+    // lista.mostrar();
   }
 }

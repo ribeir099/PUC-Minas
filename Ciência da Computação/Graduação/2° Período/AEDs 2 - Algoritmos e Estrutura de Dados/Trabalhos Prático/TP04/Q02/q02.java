@@ -7,6 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+// Criação da classe Jogo
+
 class Game {
   private int app_id = 0;
   private String name;
@@ -78,9 +80,6 @@ class Game {
     } else {
       return "null";
     }
-  }
-  public Date getData(){
-    return this.release_date;
   }
   public void setRelease_date(String data) throws ParseException {
     if(data != null){
@@ -338,143 +337,106 @@ class Game {
   }
 }
 
-class Lista {
-  private int tamanho;
-  private int inicio;
-  private int fim;
-  private Game[] lista;
+// Criação da Célula
 
-  // Método Construtor
+class Celula {
+	public Game elemento; // Elemento inserido na celula.
+	public Celula prox; // Aponta a celula prox.
 
-  public Lista(Game[] jogos, int tamanho){
-    this.tamanho = tamanho;
-    this.inicio =  0;
-    this.fim = jogos.length;
-    lista = new Game[tamanho];
-    for(int i = 0; i < jogos.length; i++){
-      this.lista[i] = jogos[i].clone();
-    }
-  }
 
-  // Métodos Seters e Geters
-
-  public int getTamanho() {
-    return tamanho;
-  }
-  public void setTamanho(int tamanho) {
-    this.tamanho = tamanho;
-  }
-
-  public int getInicio() {
-    return inicio;
-  }
-  public void setInicio(int inicio) {
-    this.inicio = inicio;
-  }
-
-  public int getFim() {
-    return fim;
-  }
-  public void setFim(int fim) {
-    this.fim = fim;
-  }
-
-  // Metodo II
-
-  public void inserirInicio(int codigo) throws ParseException, IOException {
-    if(fim + 1 <= tamanho){
-      for(int i = tamanho - 1; i > 0; i--){
-        lista[i] = lista [i - 1];
-      }
-      lista[0] = new Game(codigo);
-      lista[0].ler();
-      fim ++;
-    }
+	/**
+	 * Construtor da classe.
+	 */
+	public Celula() {
+		this.elemento = new Game();
 	}
 
-  // Metodo IF
-
-  public void inserirFim(int codigo) throws ParseException, IOException {
-    if(fim + 1 <= tamanho){
-      lista[fim] = new Game(codigo);
-      lista[fim].ler();
-      fim ++;
-    }
+	/**
+	 * Construtor da classe.
+	 * @param elemento int inserido na celula.
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	public Celula(int id) throws ParseException, IOException {
+      this.elemento = new Game(id);
+      this.elemento.ler();
+      this.prox = null;
 	}
-
-   // Metodo RI
-
-   public String removerInicio() throws ParseException, IOException {
-    String jogo = lista[0].getName();
-    fim --;
-    for(int i = 0; i < fim; i++){
-      lista[i] = lista [i + 1];
-    }
-    return jogo;
-	}
-
-  // Metodo RF
-
-  public String removerFim() throws ParseException, IOException {
-    String jogo = lista[fim - 1].getName();
-    fim --;
-    return jogo;
-	}
-
-  // Metodo I
-
-  public void inserir(int codigo, int pos) throws ParseException, IOException {
-    for(int i = fim; i > pos; i--) {
-      lista[i] = lista[i - 1];
-    }
-    lista[pos] = new Game(codigo);
-    lista[pos].ler();
-    fim ++;
-	}
-
-  // Metodo R
-
-  public String remover(int pos) throws ParseException, IOException {
-    String jogo = lista[pos].getName();
-    fim --;
-    for(int i = pos; i < fim; i++) {
-      lista[i] = lista[i + 1];
-    }
-    return jogo;
-	}
-
-  // Metodo mostrar
-
-  public void mostrar(){
-    for(int i = 0; i < fim; i++){
-      lista[i].imprimir();
-    }
-  }
-
-  //Método sort
-  public void sort(){
-    for (int i = (fim - 1); i > 0; i--) {
-			for (int j = 0; j < i; j++) {
-        int troca = lista[j].getDevelopers().compareTo(lista[j + 1].getDevelopers());
-        if(troca == 0) {
-          troca = lista[j].getName().compareTo(lista[j + 1].getName());
-        }
-				if (troca > 0) {
-          swap(j, j+1);
-				}
-			}
-		}
-  }
-
-  //Método swap
-  public void swap(int menor, int i){
-    Game temp = lista[menor];
-    lista[menor] = lista[i];
-    lista[i] = temp;
-  }
 }
 
-class q08 {
+// Criação da pilha com alocação dinámica
+
+class Pilha {
+	private Celula topo;
+
+	/**
+	 * Construtor da classe que cria uma fila sem elementos.
+	 */
+	public Pilha() {
+		topo = null;
+	}
+
+	/**
+	 * Insere elemento na pilha (politica FILO).
+	 * 
+	 * @param x int elemento a inserir.
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	public void inserir(int id) throws ParseException, IOException {
+		Celula tmp = new Celula(id);
+		tmp.prox = topo;
+		topo = tmp;
+		tmp = null;
+	}
+
+	/**
+	 * Remove elemento da pilha (politica FILO).
+	 * 
+	 * @return Elemento removido.
+	 * @trhows Exception Se a sequencia nao contiver elementos.
+	 */
+	public String remover() throws Exception {
+		if (topo == null) {
+			throw new Exception("Erro ao remover!");
+		}
+		String resp = topo.elemento.getName();
+		Celula tmp = topo;
+		topo = topo.prox;
+		tmp.prox = null;
+		tmp = null;
+		return resp;
+	}
+
+	/**
+	 * Mostra os elementos separados por espacos, comecando do topo.
+	 */
+	public void mostrar() {
+		int length = 0;
+		for (Celula i = topo; i != null; i = i.prox, length++) {
+			System.out.print("[" + length + "] ");
+      i.elemento.imprimir();
+		}
+	}
+
+	public void mostraPilha() {
+		mostraPilha(topo);
+	}
+
+  int length = 0;
+
+	private void mostraPilha(Celula i) {
+		if (i != null) {
+			mostraPilha(i.prox);
+      System.out.print("[" + length + "] ");
+      i.elemento.imprimir();
+      length++;
+		}
+	}
+
+}
+
+class q02 {
   public static void main(String[] args) throws Exception {
     Locale.setDefault(new Locale("en", "US"));
 
@@ -493,9 +455,41 @@ class q08 {
       games[i].ler();
     }
 
-    Lista lista = new Lista(games, games.length);
+    int numOperacoes = Integer.parseInt(MyIO.readLine());
+    
+    Pilha pilha = new Pilha();
+    for(int i = 0; i < games.length; i++){
+      pilha.inserir(games[i].getApp_id());
+    }
 
-    lista.sort();
-    lista.mostrar();
+    int numRemocoes = 0;
+    String[] operacoes = new String[numOperacoes];
+
+    for(int i = 0; i < numOperacoes; i++){
+      operacoes[i] = MyIO.readLine();
+      if(operacoes[i].charAt(0) == 'R'){
+        numRemocoes ++;
+      }
+    }
+    
+    String[] jogosRemovidos = new String[numRemocoes];
+    int removidos = 0;
+
+    for(int i = 0; i < numOperacoes; i++){
+      String[] operacao = operacoes[i].split(" ");
+      if(operacao[0].charAt(0) == 'I'){
+        pilha.inserir(Integer.parseInt(operacao[1]));
+      } else if(operacao[0].charAt(0) == 'R'){
+        jogosRemovidos[removidos] = pilha.remover();
+        removidos ++;
+      } else {
+        throw new Exception("Operação Inválida");
+      }
+    }
+
+    for(int i = 0; i < removidos; i ++){
+      System.out.println("(R) " + jogosRemovidos[i]);
+    }
+    pilha.mostraPilha();
   }
 }
