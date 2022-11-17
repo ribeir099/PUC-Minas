@@ -7,8 +7,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-// Criação da classe Jogo
-
 class Game {
   private int app_id = 0;
   private String name;
@@ -80,6 +78,9 @@ class Game {
     } else {
       return "null";
     }
+  }
+  public Date getData(){
+    return this.release_date;
   }
   public void setRelease_date(String data) throws ParseException {
     if(data != null){
@@ -337,112 +338,91 @@ class Game {
   }
 }
 
-// Criação da Célula
+// Criação da da célula da matriz
 
 class Celula {
-	public Game elemento; // Elemento inserido na celula.
-	public Celula prox; // Aponta a celula prox.
+  public int elemento;
+  public Celula down, up, left, rigth;
 
-
-	/**
-	 * Construtor da classe.
-	 */
-	public Celula() {
-		this.elemento = new Game();
-	}
-
-	/**
-	 * Construtor da classe.
-	 * @param elemento int inserido na celula.
-	 * @throws IOException
-	 * @throws ParseException
-	 */
-	public Celula(int id) throws ParseException, IOException {
-      this.elemento = new Game(id);
-      this.elemento.ler();
-      this.prox = null;
-	}
-}
-
-// Criação da fila com alocação dinámica
-
-class Fila {
-	private Celula primeiro;
-  private Celula ultimo;
-
-	public Celula getPrimeiro() {
-    return primeiro;
+  public Celula(){
+     this(0);
   }
 
-	public Celula getUltimo() {
-    return ultimo;
+  public Celula(int elemento){
+     this(elemento, null, null, null, null);
   }
 
-	public Fila() {
-		primeiro = new Celula();
-		ultimo = primeiro;
-	}
-
-	public void inserir(int id) throws ParseException, IOException {
-		ultimo.prox = new Celula(id);
-		ultimo = ultimo.prox;
-	}
-
-	public String remover() throws Exception {
-		if (primeiro == ultimo) {
-			throw new Exception("Erro ao remover!");
-		}
-
-    Celula tmp = primeiro;
-		primeiro = primeiro.prox;
-		String resp = primeiro.elemento.getName();
-    tmp.prox = null;
-    tmp = null;
-		return resp;
-	}
-
-
-	/**
-	 * Mostra os elementos separados por espacos.
-	 */
-	public void mostrar() {
-    int length = 0;
-    for (Celula i = primeiro.prox; i != null; i = i.prox, length ++) {
-      System.out.print("[" + length + "] ");
-      i.elemento.imprimir();
-    }
-  }
-
-  // Método que retorna o tamanho da fila
-
-  public int tamanho() {
-    int tamanho = 0; 
-    for(Celula i = primeiro; i != ultimo; i = i.prox, tamanho++);
-    return tamanho;
-  }
-
-  // Método para saber se a fila está cheia
-
-  public boolean isFull(){
-    boolean full = false;
-    
-    if(this.tamanho() > 4){
-      full = true;
-    }
-
-    return full;
-  }
-
-  public int getMedia(){
-    float soma = 0;
-    for(Celula i = primeiro; i != ultimo; i = i.prox, soma += i.elemento.getAvg_pt());
-    float media = Math.round(soma / this.tamanho());
-
-    return (int)media;
+  public Celula(int elemento, Celula down, Celula up, Celula left, Celula rigth){
+     this.elemento = elemento;
+     this.down = down;
+     this.up = up;
+     this.left = left;
+     this.rigth = rigth;
   }
 }
 
-class q03 {
+// Criação da matriz alocação dinámica
+
+class Matriz {
+  private Celula inicio;
+  private int linha, coluna;
+
+  public Matriz (){
+     Matriz(3, 3);
+  }
+
+  public Matriz (int linha, int coluna){
+     this.linha = linha;
+     this.coluna = coluna;
+
+     //alocar a matriz com this.linha linhas e this.coluna colunas
+  }
+
+
+  public Matriz soma (Matriz m) {
+     Matriz resp = null;
+
+     if(this.linha == m.linha && this.coluna == m.coluna){
+        resp = new Matriz(this.linha, this.coluna);
+        for(){
+           for(){
+              //sendo c (pont em resp), a (em this) e b (em m)
+              c.elemento = a.elemento + b.elemento;
+           }
+        }
+        //...
+     }
+
+     return resp;
+  }
+
+  public Matriz multiplicacao (Matriz m) {
+     Matriz resp = null;
+
+     if(){
+        //...
+     }
+
+     return resp;
+  }
+
+  public boolean isQuadrada(){
+     boolean (this.linha == this.coluna);
+  }
+
+  public void mostrarDiagonalPrincipal (){
+     if(isQuadrada() == true){
+
+     }
+  }
+
+  public void mostrarDiagonalSecundaria (){
+     if(isQuadrada() == true){
+     }
+  }
+}
+
+class q07 {
   public static void main(String[] args) throws Exception {
     Locale.setDefault(new Locale("en", "US"));
 
@@ -461,53 +441,16 @@ class q03 {
       games[i].ler();
     }
 
-    int numOperacoes = Integer.parseInt(MyIO.readLine());
-    
-    Fila fila = new Fila();
-
+    Lista lista = new Lista();
     for(int i = 0; i < games.length; i++){
-      if(!fila.isFull()) {
-        fila.inserir(games[i].getApp_id());
-        System.out.println(fila.getMedia()); 
-      } else {        
-        fila.remover();
-        fila.inserir(games[i].getApp_id());        
-        System.out.println(fila.getMedia());
-      }
+      lista.inserirFim(games[i].getApp_id());
     }
 
-    int numRemocoes = 0;
-    String[] operacoes = new String[numOperacoes];
+    System.out.println("Lista sem ordenar: \n");
+    lista.mostrar();
 
-    for(int i = 0; i < numOperacoes; i++){
-      operacoes[i] = MyIO.readLine();
-      if(operacoes[i].charAt(0) == 'R'){
-        numRemocoes ++;
-      }
-    }
-    
-    String[] jogosRemovidos = new String[numRemocoes];
-    int removidos = 0;
-
-    for(int i = 0; i < numOperacoes; i++){
-      String[] operacao = operacoes[i].split(" ");
-      if(operacao[0].charAt(0) == 'I'){
-        if(fila.isFull()){
-          System.out.println(operacoes[i]);
-          fila.remover();
-        }
-        fila.inserir(Integer.parseInt(operacao[1]));
-        System.out.println(fila.getMedia());
-      } else if(operacao[0].charAt(0) == 'R'){
-        System.out.println(operacoes[i]);
-        jogosRemovidos[removidos] = fila.remover();
-        System.out.println("(R) " + jogosRemovidos[removidos]);
-        removidos ++;
-      } else {
-        throw new Exception("Operação Inválida");
-      }
-    }
-
-    fila.mostrar();
+    lista.sort();
+    System.out.println("\nLista ordenada: \n");
+    lista.mostrar();
   }
 }

@@ -25,7 +25,7 @@ class Game {
   private String developers;
   private String[] genres;
 
-  private void saveGame(String[] args) throws ParseException{
+  private void saveGame(String[] args) throws ParseException {
     setApp_id(Integer.parseInt(args[0]));
     setName(args[1]);
     setRelease_date(args[2]);
@@ -45,13 +45,13 @@ class Game {
   }
 
   // Métodos Costrutores
-  
-  public Game(){
+
+  public Game() {
     this.app_id = 0;
     this.name = "";
   }
 
-  public Game(int app_id){
+  public Game(int app_id) {
     this.app_id = app_id;
   }
 
@@ -60,6 +60,7 @@ class Game {
   public int getApp_id() {
     return app_id;
   }
+
   public void setApp_id(int app_id) {
     this.app_id = app_id;
   }
@@ -67,28 +68,31 @@ class Game {
   public String getName() {
     return name;
   }
+
   public void setName(String name) {
     this.name = name;
   }
 
   public String getRelease_date() throws NullPointerException {
-    SimpleDateFormat sdf = new SimpleDateFormat("MMM/yyyy",Locale.US);
-    if(release_date != null){
+    SimpleDateFormat sdf = new SimpleDateFormat("MMM/yyyy", Locale.US);
+    if (release_date != null) {
       return sdf.format(release_date);
     } else {
       return "null";
     }
   }
-  public Date getData(){
+
+  public Date getData() {
     return this.release_date;
   }
+
   public void setRelease_date(String data) throws ParseException {
-    if(data != null){
-      if(data.length() < 10){
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM yyyy",Locale.US);
+    if (data != null) {
+      if (data.length() < 10) {
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM yyyy", Locale.US);
         this.release_date = sdf.parse(data);
       } else {
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy",Locale.US);
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy", Locale.US);
         this.release_date = sdf.parse(data);
       }
     }
@@ -97,6 +101,7 @@ class Game {
   public String getOwners() {
     return owners;
   }
+
   public void setOwners(String owners) {
     this.owners = owners;
   }
@@ -104,6 +109,7 @@ class Game {
   public int getAge() {
     return age;
   }
+
   public void setAge(int age) {
     this.age = age;
   }
@@ -111,6 +117,7 @@ class Game {
   public float getPrice() {
     return price;
   }
+
   public void setPrice(float price) {
     this.price = price;
   }
@@ -118,26 +125,28 @@ class Game {
   public int getDlcs() {
     return dlcs;
   }
+
   public void setDlcs(int dlcs) {
     this.dlcs = dlcs;
   }
 
   public String getLanguages() {
     String concatLanguages = "[";
-    if(languages != null){
-      for(int i = 0; i < languages.length; i++){
+    if (languages != null) {
+      for (int i = 0; i < languages.length; i++) {
         concatLanguages += languages[i];
-        if(i + 1 != languages.length){
+        if (i + 1 != languages.length) {
           concatLanguages += ",";
         }
       }
       concatLanguages += "]";
-      
+
       return concatLanguages;
     } else {
       return "null";
     }
   }
+
   public void setLanguages(String languages) {
     languages = languages.replaceAll("\\[", "");
     languages = languages.replaceAll("\\]", "");
@@ -148,27 +157,31 @@ class Game {
   public String getWebsite() {
     return website;
   }
+
   public void setWebsite(String website) {
     this.website = website;
   }
 
-  public boolean getWindows(){
+  public boolean getWindows() {
     return windows;
   }
+
   public void setWindows(boolean windows) {
     this.windows = windows;
   }
 
-  public boolean getMac(){
+  public boolean getMac() {
     return mac;
   }
+
   public void setMac(boolean mac) {
     this.mac = mac;
   }
 
-  public boolean getLinux(){
+  public boolean getLinux() {
     return linux;
   }
+
   public void setLinux(boolean linux) {
     this.linux = linux;
   }
@@ -176,6 +189,7 @@ class Game {
   public float getUpvotes() {
     return upvotes;
   }
+
   public void setUpvotes(float upvotes) {
     this.upvotes = upvotes;
   }
@@ -183,6 +197,7 @@ class Game {
   public int getAvg_pt() {
     return avg_pt;
   }
+
   public void setAvg_pt(int avg_pt) {
     this.avg_pt = avg_pt;
   }
@@ -190,28 +205,30 @@ class Game {
   public String getDevelopers() {
     return developers;
   }
+
   public void setDevelopers(String developers) {
     this.developers = developers;
   }
 
   public String getGenres() {
     String concatGenres = "[";
-    if(genres != null){
-      for(int i = 0; i < genres.length; i++){
+    if (genres != null) {
+      for (int i = 0; i < genres.length; i++) {
         concatGenres += genres[i];
-        if(i + 1 != genres.length){
+        if (i + 1 != genres.length) {
           concatGenres += ", ";
         }
       }
       concatGenres += "]";
-  
+
       return concatGenres;
     } else {
       return "null";
     }
   }
+
   public void setGenres(String genres) {
-    if(genres != null){
+    if (genres != null) {
       genres = genres.replaceAll("\\[", "");
       genres = genres.replaceAll("\\]", "");
       this.genres = genres.split(",");
@@ -224,7 +241,7 @@ class Game {
 
   // Método clone
 
-  public Game clone(){
+  public Game clone() {
     Game clone = new Game();
     clone.app_id = this.app_id;
     clone.name = this.name;
@@ -247,7 +264,7 @@ class Game {
 
   // Método imprimir
 
-  public void imprimir() throws NullPointerException{
+  public void imprimir() throws NullPointerException {
     System.out.print(app_id + " ");
     System.out.print(name + " ");
     System.out.print(getRelease_date() + " ");
@@ -256,10 +273,10 @@ class Game {
     System.out.print(new DecimalFormat("0.00 ").format(price));
     System.out.print(dlcs + " ");
     System.out.print(getLanguages() + " ");
-    if(website != null){
-      if(website.length() > 0){
+    if (website != null) {
+      if (website.length() > 0) {
         System.out.print(website + " ");
-      } else{
+      } else {
         System.out.print("null ");
       }
     }
@@ -267,19 +284,19 @@ class Game {
     System.out.print(mac + " ");
     System.out.print(linux + " ");
     System.out.print(Math.round(upvotes) + "% ");
-    if(avg_pt > 0){
-      if(avg_pt > 60){
-        int hours = (int)avg_pt / 60;
+    if (avg_pt > 0) {
+      if (avg_pt > 60) {
+        int hours = (int) avg_pt / 60;
         int minuts = avg_pt - (hours * 60);
-        if(minuts == 0){
+        if (minuts == 0) {
           System.out.print(hours + "h ");
         } else {
           System.out.print(hours + "h " + minuts + "m ");
         }
-      }else {
+      } else {
         System.out.print(avg_pt + "m ");
       }
-    } else{
+    } else {
       System.out.print("null ");
     }
     System.out.print(developers + " ");
@@ -289,18 +306,18 @@ class Game {
 
   // Método ler
 
-  public void ler() throws ParseException, IOException{
-    String path = "/tmp/games.csv";
-    try(BufferedReader br = new BufferedReader(new FileReader(path))){
+  public void ler() throws ParseException, IOException {
+    String path = "./tmp/games.csv";
+    try (BufferedReader br = new BufferedReader(new FileReader(path))) {
       String line = br.readLine();
-      while( line != null){
+      while (line != null) {
         String[] result = new String[17];
         int j = 0;
         int inicio = 0, fim = 0;
         boolean aspas = false;
-        for(int i = 0; i < line.length(); i++){
-          if(line.charAt(i) == ',' && !aspas){
-            if(line.charAt(i - 1) != '"'){
+        for (int i = 0; i < line.length(); i++) {
+          if (line.charAt(i) == ',' && !aspas) {
+            if (line.charAt(i - 1) != '"') {
               fim = i;
               result[j] = line.substring(inicio, fim);
               j++;
@@ -309,8 +326,8 @@ class Game {
               inicio = i + 1;
             }
           }
-          if(line.charAt(i) == '"'){
-            if(aspas){
+          if (line.charAt(i) == '"') {
+            if (aspas) {
               fim = i;
               result[j] = line.substring(inicio, fim);
               j++;
@@ -321,8 +338,8 @@ class Game {
             }
           }
         }
-        if(Integer.parseInt(result[0]) == app_id){
-          if(result[16] == null){
+        if (Integer.parseInt(result[0]) == app_id) {
+          if (result[16] == null) {
             fim = line.length();
             result[16] = line.substring(inicio, fim);
           }
@@ -331,8 +348,7 @@ class Game {
         }
         line = br.readLine();
       }
-    }
-    catch(IOException e) {
+    } catch (IOException e) {
       MyIO.println("Erro: " + e.getMessage());
     }
   }
@@ -346,12 +362,12 @@ class Lista {
 
   // Método Construtor
 
-  public Lista(Game[] jogos, int tamanho){
+  public Lista(Game[] jogos, int tamanho) {
     this.tamanho = tamanho;
-    this.inicio =  0;
+    this.inicio = 0;
     this.fim = jogos.length;
     lista = new Game[tamanho];
-    for(int i = 0; i < jogos.length; i++){
+    for (int i = 0; i < jogos.length; i++) {
       this.lista[i] = jogos[i].clone();
     }
   }
@@ -361,6 +377,7 @@ class Lista {
   public int getTamanho() {
     return tamanho;
   }
+
   public void setTamanho(int tamanho) {
     this.tamanho = tamanho;
   }
@@ -368,6 +385,7 @@ class Lista {
   public int getInicio() {
     return inicio;
   }
+
   public void setInicio(int inicio) {
     this.inicio = inicio;
   }
@@ -375,6 +393,7 @@ class Lista {
   public int getFim() {
     return fim;
   }
+
   public void setFim(int fim) {
     this.fim = fim;
   }
@@ -382,103 +401,107 @@ class Lista {
   // Metodo II
 
   public void inserirInicio(int codigo) throws ParseException, IOException {
-    if(fim + 1 <= tamanho){
-      for(int i = tamanho - 1; i > 0; i--){
-        lista[i] = lista [i - 1];
+    if (fim + 1 <= tamanho) {
+      for (int i = tamanho - 1; i > 0; i--) {
+        lista[i] = lista[i - 1];
       }
       lista[0] = new Game(codigo);
       lista[0].ler();
-      fim ++;
+      fim++;
     }
-	}
+  }
 
   // Metodo IF
 
   public void inserirFim(int codigo) throws ParseException, IOException {
-    if(fim + 1 <= tamanho){
+    if (fim + 1 <= tamanho) {
       lista[fim] = new Game(codigo);
       lista[fim].ler();
-      fim ++;
+      fim++;
     }
-	}
+  }
 
-   // Metodo RI
+  // Metodo RI
 
-   public String removerInicio() throws ParseException, IOException {
+  public String removerInicio() throws ParseException, IOException {
     String jogo = lista[0].getName();
-    fim --;
-    for(int i = 0; i < fim; i++){
-      lista[i] = lista [i + 1];
+    fim--;
+    for (int i = 0; i < fim; i++) {
+      lista[i] = lista[i + 1];
     }
     return jogo;
-	}
+  }
 
   // Metodo RF
 
   public String removerFim() throws ParseException, IOException {
     String jogo = lista[fim - 1].getName();
-    fim --;
+    fim--;
     return jogo;
-	}
+  }
 
   // Metodo I
 
   public void inserir(int codigo, int pos) throws ParseException, IOException {
-    for(int i = fim; i > pos; i--) {
+    for (int i = fim; i > pos; i--) {
       lista[i] = lista[i - 1];
     }
     lista[pos] = new Game(codigo);
     lista[pos].ler();
-    fim ++;
-	}
+    fim++;
+  }
 
   // Metodo R
 
   public String remover(int pos) throws ParseException, IOException {
     String jogo = lista[pos].getName();
-    fim --;
-    for(int i = pos; i < fim; i++) {
+    fim--;
+    for (int i = pos; i < fim; i++) {
       lista[i] = lista[i + 1];
     }
     return jogo;
-	}
+  }
 
   // Metodo mostrar
 
-  public void mostrar(){
-    for(int i = 0; i < fim; i++){
+  public void mostrar() {
+    for (int i = 0; i < fim; i++) {
       lista[i].imprimir();
     }
   }
 
-  //Método sort
-  public void sort(){
+  // Método sort
+  public void sort() {
     quicksort(0, fim - 1);
   }
 
-  //Método swap
-  public void swap(int menor, int i){
+  // Método swap
+  public void swap(int menor, int i) {
     Game temp = lista[menor];
     lista[menor] = lista[i];
     lista[i] = temp;
   }
 
-  //Método quicksort
+  // Método quicksort
   private void quicksort(int esq, int dir) {
     int i = esq, j = dir;
-    Game pivo = lista[(dir+esq)/2];
+    Game pivo = lista[(dir + esq) / 2];
     while (i <= j) {
-        while (lista[i].getData().before(pivo.getData())) i++;
-        while (lista[j].getData().after(pivo.getData())) j--;
-        if (i <= j) {
-            swap(i, j);
-            i++;
-            j--;
-        }
+      while (lista[i].getData().before(pivo.getData()))
+        i++;
+      while (lista[j].getData().after(pivo.getData()))
+        j--;
+      if (i <= j) {
+        swap(i, j);
+        i++;
+        j--;
+      }
     }
-    if (esq < j)  quicksort(esq, j);
-    if (i < dir)  quicksort(i, dir);
-}
+    if (esq < j)
+      quicksort(esq, j);
+    if (i < dir)
+      quicksort(i, dir);
+  }
 }
 
 class q06 {
@@ -488,14 +511,14 @@ class q06 {
     String[] entradaGames = new String[1000];
     int numEntradaGames = 0;
 
-    do{
+    do {
       entradaGames[numEntradaGames] = MyIO.readLine();
-    } while(entradaGames[numEntradaGames++].equals("FIM") == false);
+    } while (entradaGames[numEntradaGames++].equals("FIM") == false);
     numEntradaGames--;
-    
+
     Game[] games = new Game[numEntradaGames];
 
-    for(int i = 0; i < games.length; i++){
+    for (int i = 0; i < games.length; i++) {
       games[i] = new Game(Integer.parseInt(entradaGames[i]));
       games[i].ler();
     }

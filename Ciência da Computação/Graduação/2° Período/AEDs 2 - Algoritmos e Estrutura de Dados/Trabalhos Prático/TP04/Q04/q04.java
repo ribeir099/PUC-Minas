@@ -477,7 +477,7 @@ class Lista {
 	 */
 	public String remover(int pos) throws Exception {
       String resp;
-      int tamanho = tamanho();
+      int tamanho = this.tamanho();
 
 		if (primeiro == ultimo){
 			throw new Exception("Erro ao remover (vazia)!");
@@ -519,7 +519,7 @@ class Lista {
 
   public int tamanho() {
     int tamanho = 0; 
-    for(Celula i = primeiro; i != ultimo; i = i.prox, tamanho++);
+    for(Celula i = primeiro; i.prox != null; i = i.prox, tamanho++);
     return tamanho;
   }
 
@@ -532,39 +532,37 @@ class Lista {
 
   //Método swap
   public void swap(Celula maior, Celula menor){
-    if(menor.prox != null) {
-      Celula tmp = new Celula();
-      tmp.ant = maior.ant;
-      tmp.prox = maior.prox;
-  
-      maior.ant.prox = menor;
-      maior.prox.ant = menor;
-      maior.ant = menor.ant;
-      maior.prox = menor.prox;
-  
-      menor.ant.prox = maior;
-      menor.prox.ant = maior;
-      menor.ant = tmp.ant;
-      menor.prox = tmp.prox;
-  
-      tmp = null;
-    }
+    Game temp = maior.elemento;
+    maior.elemento = menor.elemento;
+    menor.elemento = temp;
+    temp = null;
   }
 
   //Método quicksort
   private void quicksort(int esq, int dir) {
-    int i = esq, j = dir, pos = Math.round(this.tamanho() / 2);
-    Celula pivo = primeiro.prox, inicio = primeiro.prox.prox, fim = ultimo;
-    for(int g = 0; g < pos; g++, pivo = pivo.prox);
+    int i = esq, j = dir, pos = (dir + esq) / 2;
+    
+    System.out.println(pos);
 
+    Celula pivo = primeiro, inicio = primeiro.prox, fim = ultimo;
+    for(int g = 0; g < pos; g++, pivo = pivo.prox, System.out.println(pivo.elemento.getName()));
+
+    System.out.println("\n");
+
+    // System.out.println(pivo.elemento.getName());
     while (i <= j) {
-      while (inicio.elemento.getData().before(pivo.elemento.getData())){
+      while (inicio.elemento.getData().compareTo(pivo.elemento.getData()) > 0){
         inicio = inicio.prox;
-        System.out.println(i);
+        // System.out.println("Data inicio: " + inicio.elemento.getRelease_date());
+        // System.out.println("Data pivo: " + pivo.elemento.getRelease_date());
+        // System.out.println(inicio.elemento.getData().compareTo(pivo.elemento.getData()));
         i++;
       } 
-      while (fim.elemento.getData().after(pivo.elemento.getData())){
+      while (fim.elemento.getData().compareTo(pivo.elemento.getData()) < 0){
         fim = fim.ant;
+        // System.out.println("Data fim: " + fim.elemento.getRelease_date());
+        // System.out.println("Data pivo: " + pivo.elemento.getRelease_date());
+        // System.out.println(inicio.elemento.getData().compareTo(pivo.elemento.getData()));
         j--;
       } 
       if (i <= j) {
@@ -601,8 +599,12 @@ class q04 {
     for(int i = 0; i < games.length; i++){
       lista.inserirFim(games[i].getApp_id());
     }
-    
+
+    System.out.println("Lista sem ordenar: \n");
+    lista.mostrar();
+
     lista.sort();
-    // lista.mostrar();
+    System.out.println("\nLista ordenada: \n");
+    lista.mostrar();
   }
 }
